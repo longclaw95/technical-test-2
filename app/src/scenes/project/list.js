@@ -64,6 +64,12 @@ const ProjectList = () => {
               <div className="w-full md:w-[25%] px-[10px]">
                 <span className="text-[16px] font-medium text-[#212325]">Budget consumed {project.paymentCycle === "MONTHLY" && "this month"}:</span>
                 <Budget project={project} />
+                <div className="flex items-center">
+                  {/* Feature to be added */}
+                  {project.is_late && <span className="text-red-500 font-semibold">❗ Project is late</span>}
+                  {project.is_due_soon && !project.is_late && <span className="text-yellow-500 font-semibold">⚡ Limit date is approaching</span>}
+                  {!project.is_late && !project.is_due_soon && <span className="text-green-500 font-semibold">🟢 Project is on track</span>}
+                </div>
               </div>
             </div>
           );
