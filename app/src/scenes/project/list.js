@@ -33,30 +33,37 @@ const ProjectList = () => {
     setActiveProjects(p);
   };
 
+  // FIX: Function to add a project to the list
+  const addProject = (project) => {
+    const newProjects = [project, ...projects];
+    setProjects(newProjects);
+  };
+
   return (
     <div className="w-full p-2 md:!px-8">
-      <Create onChangeSearch={handleSearch} />
+      <Create onChangeSearch={handleSearch} onCreateProject={addProject} />
       <div className="py-3">
-        {activeProjects.map((hit) => {
+        {/* replace hit by active project so that code could be understandable*/}
+        {activeProjects.map((project) => {
           return (
             <div
-              key={hit._id}
-              onClick={() => history.push(`/project/${hit._id}`)}
+              key={project._id}
+              onClick={() => history.push(`/project/${project._id}`)}
               className="flex justify-between flex-wrap p-3 border border-[#FFFFFF] bg-[#F9FBFD] rounded-[16px] mt-3 cursor-pointer">
               <div className="flex w-full md:w-[25%] border-r border-[#E5EAEF]">
                 <div className="flex flex-wrap gap-4 items-center">
-                  {hit.logo && <img className="w-[85px] h-[85px] rounded-[8px] object-contain	" src={hit.logo} alt="ProjectImage.png" />}
+                  {project.logo && <img className="w-[85px] h-[85px] rounded-[8px] object-contain	" src={project.logo} alt="ProjectImage.png" />}
                   <div className="flex flex-col flex-wrap flex-1">
-                    <div className="text-[18px] text-[#212325] font-semibold flex flex-wrap">{hit.name}</div>
+                    <div className="text-[18px] text-[#212325] font-semibold flex flex-wrap">{project.name}</div>
                   </div>
                 </div>
               </div>
               <div className="w-full md:w-[50%] border-r border-[#E5EAEF] pl-[10px]">
-                <span className="text-[14px] font-medium text-[#212325]">{hit.description ? hit.description : ""}</span>
+                <span className="text-[14px] font-medium text-[#212325]">{project.description ? project.description : ""}</span>
               </div>
-              <div className="w-full md:w-[25%]  px-[10px]">
-                <span className="text-[16px] font-medium text-[#212325]">Budget consumed {hit.paymentCycle === "MONTHLY" && "this month"}:</span>
-                <Budget project={hit} />
+              <div className="w-full md:w-[25%] px-[10px]">
+                <span className="text-[16px] font-medium text-[#212325]">Budget consumed {project.paymentCycle === "MONTHLY" && "this month"}:</span>
+                <Budget project={project} />
               </div>
             </div>
           );
@@ -92,7 +99,8 @@ const Budget = ({ project }) => {
   return <ProgressBar percentage={width} max={budget_max_monthly} value={total} />;
 };
 
-const Create = ({ onChangeSearch }) => {
+// FIX: Function to add a project to the list
+const Create = ({ onChangeSearch, onCreateProject }) => {
   const [open, setOpen] = useState(false);
 
   return (
@@ -144,11 +152,13 @@ const Create = ({ onChangeSearch }) => {
                   values.status = "active";
                   const res = await api.post("/project", values);
                   if (!res.ok) throw res;
+                  // FIX: add the new project to the list
+                  onCreateProject(res.data);
                   toast.success("Created!");
                   setOpen(false);
                 } catch (e) {
                   console.log(e);
-                  toast.error("Some Error!", e.code);
+                  toast.error(e.message);
                 }
                 setSubmitting(false);
               }}>

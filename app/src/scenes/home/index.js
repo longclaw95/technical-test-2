@@ -1,16 +1,24 @@
 import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+
 import api from "../../services/api";
 
 const Home = () => {
   const [availableUsers, setAvailableUsers] = useState();
 
+  const filter = useSelector((state) => state.Auth.filter);
+
   async function getUser() {
-    const { data } = await api.get("/user/available");
-    setAvailableUsers(data);
+    if (filter === "available") {
+      const { data } = await api.get("/user");
+      setAvailableUsers(data);
+    } else {
+      setAvailableUsers([]);
+    }
   }
   useEffect(() => {
     getUser();
-  }, []);
+  }, [filter]);
 
   return (
     <div className="px-2 md:!px-8 flex flex-col md:flex-row gap-5 mt-5">

@@ -2,20 +2,29 @@ import { Formik } from "formik";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useHistory, useParams } from "react-router-dom";
+import { useDispatch } from "react-redux";
 
 import Loader from "../../components/loader";
 import LoadingButton from "../../components/loadingButton";
 import api from "../../services/api";
+
+import { setUser } from "../../redux/auth/actions";
+import { avartarUrl } from "../../utils";
 
 export default () => {
   const [user, setUser] = useState(null);
   const { id } = useParams();
   useEffect(() => {
     (async () => {
-      const response = await api.get(`/user/${id}`);
-      setUser(response.data);
+      try {
+        const response = await api.get(`/user/${id}`);
+        setUser(response.data);
+      } catch (error) {
+        console.error("Failed to fetch user:", error);
+        toast.error("Failed to load user details!");
+      }
     })();
-  }, []);
+  }, [id]);
 
   if (!user) return <Loader />;
 
@@ -30,21 +39,39 @@ export default () => {
 
 const Detail = ({ user }) => {
   const history = useHistory();
+  const dispatch = useDispatch();
 
   async function deleteData() {
     const confirm = window.confirm("Are you sure ?");
     if (!confirm) return;
-    await api.remove(`/user/${user._id}`);
-    toast.success("successfully removed!");
-    history.push(`/user`);
+    try {
+      await api.remove(`/user/${user._id}`);
+      toast.success("Successfully removed!");
+      history.push(`/user`);
+    } catch (error) {
+      console.error("Error deleting user:", error);
+      toast.error("Failed to delete user.");
+    }
   }
 
   return (
     <Formik
-      initialValues={user}
+      initialValues={{
+        name: user.name || "",
+        email: user.email || "",
+        status: user.status || "active",
+        job_title: user.job_title || "",
+        days_worked: user.days_worked || 0,
+        costPerDay: user.costPerDay || 0,
+        sellPerDay: user.sellPerDay || 0,
+        description: user.description || "",
+      }}
+      enableReinitialize
       onSubmit={async (values) => {
         try {
           await api.put(`/user/${user._id}`, values);
+          //FIX : Update user when going to account page
+          dispatch(setUser({ ...values, avatar: avartarUrl, _id: user._id, address: user.address }));
           toast.success("Updated!");
         } catch (e) {
           console.log(e);
@@ -57,13 +84,7 @@ const Detail = ({ user }) => {
             <div className="flex justify-between flex-wrap mt-4">
               <div className="w-full md:w-[260px] mt-[10px] md:mt-0 ">
                 <div className="text-[14px] text-[#212325] font-medium	">Name</div>
-                <input
-                  className="projectsInput text-[14px] font-normal text-[#212325] bg-[#F9FBFD] rounded-[10px]"
-                  name="name"
-                  disabled
-                  value={values.name}
-                  onChange={handleChange}
-                />
+                <input className="projectsInput text-[14px] font-normal text-[#212325] bg-[#F9FBFD] rounded-[10px]" name="name" value={values.name} onChange={handleChange} />
               </div>
               <div className="w-full md:w-[260px] mt-[10px] md:mt-0">
                 <div className="text-[14px] text-[#212325] font-medium	">Email</div>
@@ -132,7 +153,11 @@ const Detail = ({ user }) => {
             </div>
 
             <div className="flex  mt-2">
-              <LoadingButton className="bg-[#0560FD] text-[16px] font-medium text-[#FFFFFF] py-[12px] px-[22px] rounded-[10px]" loading={isSubmitting} onChange={handleSubmit}>
+              <LoadingButton
+                className="bg-[#0560FD] text-[16px] font-medium text-[#FFFFFF] py-[12px] px-[22px] rounded-[10px]"
+                loading={isSubmitting}
+                onClick={handleSubmit}
+                type="submit">
                 Update
               </LoadingButton>
               <button className="ml-[10px] bg-[#F43F5E] text-[16px] font-medium text-[#FFFFFF] py-[12px] px-[22px] rounded-[10px]" onClick={deleteData}>

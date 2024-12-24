@@ -75,7 +75,6 @@ export default function EditProject() {
                     <div className="w-full md:w-[260px] mt-2">
                       <div className="text-[14px] text-[#212325] font-medium	">Status</div>
                       <select className="projectsInput text-[14px] font-normal text-[#212325] rounded-[10px]" name="status" value={values.status} onChange={handleChange}>
-                        <option value=""></option>
                         <option value="active">Active</option>
                         <option value="inactive">Inactive</option>
                       </select>

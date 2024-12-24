@@ -10,6 +10,7 @@ import api from "../services/api";
 
 export default () => {
   const user = useSelector((state) => state.Auth.user);
+  console.log("🚀 ~ user:", user);
   const [isLoading, setIsLoading] = useState(false);
   const [values, setValues] = useState({
     email: user.email,

@@ -2,13 +2,14 @@ import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { MdDeleteForever } from "react-icons/md";
 import { useSelector } from "react-redux";
-import Loader from "../../components/loader";
-import api from "../../services/api";
-
-import SelectProject from "../../components/selectProject";
-import SelectMonth from "./../../components/selectMonth";
+import { v4 as uuidv4 } from "uuid";
 
 import { getDaysInMonth } from "./utils";
+
+import Loader from "../../components/loader";
+import api from "../../services/api";
+import SelectProject from "../../components/selectProject";
+import SelectMonth from "./../../components/selectMonth";
 
 const Activity = () => {
   const [date, setDate] = useState(null);
@@ -48,6 +49,7 @@ const Activity = () => {
 
 const Activities = ({ date, user, project }) => {
   const [activities, setActivities] = useState([]);
+  console.log("🚀 ~ Activities ~ activities:", activities);
   const [open, setOpen] = useState(null);
 
   useEffect(() => {
@@ -175,7 +177,7 @@ const Activities = ({ date, user, project }) => {
                   </tr>
                   {activities.map((e, i) => {
                     return (
-                      <React.Fragment key={e.project}>
+                      <React.Fragment key={e.projectId}>
                         <tr className="border-t border-b border-r border-[#E5EAEF]" key={`1-${e._id}`} onClick={() => setOpen(i)}>
                           <th className="w-[100px] border-t border-b border-r text-[12px] font-bold text-[#212325] text-left">
                             <div className="flex flex-1 items-center justify-between gap-1 px-2">
@@ -184,13 +186,18 @@ const Activities = ({ date, user, project }) => {
                               </div>
                               <div className="flex flex-col items-end">
                                 <div className="text-xs italic font-normal">{(e.total / 8).toFixed(2)} days</div>
-                                <div className="text-[10px] italic font-normal">{(((e.total / 8).toFixed(2) / getTotal()) * 100).toFixed(2)}%</div>
+                                <div className="text-[10px] italic font-normal">{getTotal() > 0 ? (((e.total / 8).toFixed(2) / getTotal()) * 100).toFixed(2) + "%" : "0%"}</div>
                               </div>
                             </div>
                           </th>
                           {e.detail.map((f, j) => {
                             return (
-                              <Field key={`${e.project} ${j}`} invoiced={e.invoiced} value={f.value || 0} onChange={(a) => onUpdateValue(i, j, parseFloat(a.target.value || 0))} />
+                              <Field
+                                key={uuidv4()} // Use a unique UUID for the key
+                                invoiced={e.invoiced}
+                                value={f.value || 0}
+                                onChange={(a) => onUpdateValue(i, j, parseFloat(a.target.value || 0))}
+                              />
                             );
                           })}
                           <th className={`border border-[#E5EAEF] py-[6px]`}>
@@ -211,7 +218,7 @@ const Activities = ({ date, user, project }) => {
                                 <textarea
                                   value={e.comment}
                                   onChange={(e) => onUpdateComment(i, e.target.value)}
-                                  placeholder={`Please add a comment on what you deliver on ${e.project} (We need to show value created to clients)`}
+                                  placeholder={`Please add a comment on what you deliver on ${e.projectName}  (We need to show value created to clients)`}
                                   rows={6}
                                   className="w-full text-sm pt-2 pl-2"
                                 />

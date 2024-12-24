@@ -14,3 +14,5 @@ export function formatDate(date) {
     year: "numeric",
   });
 }
+
+export const avartarUrl = "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y";

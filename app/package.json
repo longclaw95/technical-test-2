@@ -88,6 +88,7 @@
     "slate-history": "^0.66.0",
     "slate-react": "^0.77.4",
     "styled-components": "^5.1.1",
+    "uuid": "^11.0.3",
     "validator": "^13.1.1",
     "xlsx": "^0.16.9"
   },

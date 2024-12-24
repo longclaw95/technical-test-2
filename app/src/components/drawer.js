@@ -1,5 +1,6 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
+
 import { ActivitiesIcon, HomeIcon, PeopleIcon, ProjectsIcon } from "../assets/Icons";
 
 const Drawer = () => {
@@ -43,12 +44,7 @@ const Link = ({ Icon, title, to, onClick = () => {} }) => {
 const Section = ({ children, title }) => {
   return (
     <div>
-      <h1
-        className="flex gap-1 items-center uppercase text-[10px] text-gray-400 tracking-wide font-semibold mt-4 cursor-pointer hover:underline mb-2"
-        onClick={() => setOpen((o) => !o)}>
-        {title}
-      </h1>
-
+      <h1 className="flex gap-1 items-center uppercase text-[10px] text-gray-400 tracking-wide font-semibold mt-4   mb-2">{title}</h1>
       {children}
     </div>
   );

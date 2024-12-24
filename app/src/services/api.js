@@ -1,5 +1,4 @@
 import "isomorphic-fetch";
-
 import { apiURL } from "../config";
 
 class api {
@@ -15,80 +14,86 @@ class api {
     this.token = token;
   }
 
-  get(path) {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const response = await fetch(`${apiURL}${path}`, {
-          mode: "cors",
-          method: "GET",
-          credentials: "include",
-          headers: { "Content-Type": "application/json", Authorization: `JWT ${this.token}` },
-        });
+  // Refactored GET method
+  async get(path) {
+    try {
+      const response = await fetch(`${apiURL}${path}`, {
+        mode: "cors",
+        method: "GET",
+        credentials: "include",
+        headers: { "Content-Type": "application/json", Authorization: `JWT ${this.token}` },
+      });
 
-        const res = await response.json();
-        resolve(res);
-      } catch (e) {
-        reject(e);
+      const res = await response.json();
+      if (!response.ok) {
+        throw new Error(res); // Handle non-200 responses
       }
-    });
+      return res;
+    } catch (e) {
+      throw new Error(e); // Catch any error and throw it
+    }
   }
 
-  put(path, body) {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const response = await fetch(`${apiURL}${path}`, {
-          mode: "cors",
-          method: "PUT",
-          credentials: "include",
-          headers: { "Content-Type": "application/json", Authorization: `JWT ${this.token}` },
-          body: typeof body === "string" ? body : JSON.stringify(body),
-        });
+  // Refactored POST method
+  async post(path, body) {
+    try {
+      const response = await fetch(`${apiURL}${path}`, {
+        mode: "cors",
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json", Authorization: `JWT ${this.token}` },
+        body: typeof body === "string" ? body : JSON.stringify(body),
+      });
 
-        const res = await response.json();
-        resolve(res);
-      } catch (e) {
-        reject(e);
+      const res = await response.json();
+      if (!response.ok) {
+        throw new Error(res); // Handle non-200 responses
       }
-    });
+      return res;
+    } catch (e) {
+      throw new Error(e); // Catch any error and throw it
+    }
   }
 
-  remove(path) {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const response = await fetch(`${apiURL}${path}`, {
-          mode: "cors",
-          credentials: "include",
-          method: "DELETE",
-          headers: { "Content-Type": "application/json", Authorization: `JWT ${this.token}` },
-        });
-        const res = await response.json();
-        resolve(res);
-      } catch (e) {
-        reject(e);
+  // Refactored PUT method
+  async put(path, body) {
+    try {
+      const response = await fetch(`${apiURL}${path}`, {
+        mode: "cors",
+        method: "PUT",
+        credentials: "include",
+        headers: { "Content-Type": "application/json", Authorization: `JWT ${this.token}` },
+        body: typeof body === "string" ? body : JSON.stringify(body),
+      });
+
+      const res = await response.json();
+      if (!response.ok) {
+        throw new Error(res); // Handle non-200 responses
       }
-    });
+      return res;
+    } catch (e) {
+      throw new Error(e); // Catch any error and throw it
+    }
   }
 
-  post(path, body) {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const response = await fetch(`${apiURL}${path}`, {
-          mode: "cors",
-          method: "POST",
-          credentials: "include",
-          headers: { "Content-Type": "application/json", Authorization: `JWT ${this.token}` },
-          body: typeof body === "string" ? body : JSON.stringify(body),
-        });
+  // Refactored DELETE method
+  async remove(path) {
+    try {
+      const response = await fetch(`${apiURL}${path}`, {
+        mode: "cors",
+        credentials: "include",
+        method: "DELETE",
+        headers: { "Content-Type": "application/json", Authorization: `JWT ${this.token}` },
+      });
 
-        const res = await response.json();
-        if (response.status !== 200) {
-          return reject(res);
-        }
-        resolve(res);
-      } catch (e) {
-        reject(e);
+      const res = await response.json();
+      if (!response.ok) {
+        throw new Error(res); // Handle non-200 responses
       }
-    });
+      return res;
+    } catch (e) {
+      throw new Error(e); // Catch any error and throw it
+    }
   }
 }
 
